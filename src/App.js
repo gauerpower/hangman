@@ -15,7 +15,8 @@ function App() {
   const [guessedLetters, setGuessedLetters] = useState([]);
   const [wrongLetters, setWrongLetters] = useState([]);
   const [lettersToDisplay, setLettersToDisplay] = useState("");
-  const [hasGameEnded, setGameEnd] = useState(false);
+  const [hasGameEnded, setGameEnd] = useState("");
+  const [currentError, setCurrentError] = useState("");
 
   // Setting up controlled components for the message and hint inputs.
   function changeTypedText(event) {
@@ -29,16 +30,17 @@ function App() {
   // Alerts will make sure message is reasonable length and hint exists.
   function establishMessage() {
     if (typedText.length > 140) {
-      alert("Please enter a message with 140 characters or fewer");
+      setCurrentError("too long");
       return;
     } else if (!typedHint) {
-      alert("Please include a hint");
+      setCurrentError("no hint");
       return;
     } else {
       setMessageToGuess(typedText.toUpperCase());
       setHintToDisplay(typedHint.toUpperCase());
       setTypedText("");
       setTypedHint("");
+      setCurrentError("");
     }
   }
 
@@ -47,22 +49,17 @@ function App() {
   // This will be fired by useEffect when player 1 first creates the message,
   // and fired again by a different useEffect any time player 2 guesses a letter.
   function createUpdatedMessage(message) {
-    console.log(`messageToGuess is: ${messageToGuess}`);
     let visibleLetters = "";
     for (let i = 0; i < message.length; i++) {
-      console.log(`Letter being iterated over is: ${message[i]}.`);
       if (message[i] === " ") {
         visibleLetters += " ";
         console.log("Space added.");
       } else if (!guessedLetters.join("").includes(message[i])) {
         visibleLetters += "_";
-        console.log("Underscore added.");
       } else if (guessedLetters.join("").includes(message[i])) {
         visibleLetters += message[i];
-        console.log(`${message[i]} added.`);
       }
     }
-    console.log(`Resulting string after run of the loop is: ${visibleLetters}`);
     setLettersToDisplay(visibleLetters);
   }
 
@@ -85,12 +82,12 @@ function App() {
   }
 
   // Event listener for keying in letters.
-  // (Needs to be a different handler since it will be attached to the 
+  // (Needs to be a different handler since it will be attached to the
   // big document and use event.key instead of event.target.value)
 
   function guessKeyedLetter(event) {
-    if (!/[a-z]/.test(event.key)){
-      console.log("Non-alphanumeric key pressed.")
+    if (!/[a-z]/.test(event.key)) {
+      console.log("Non-alphanumeric key pressed.");
       return;
     }
     setGuessedLetters((prev) => [...prev, event.key.toUpperCase()]);
@@ -102,7 +99,6 @@ function App() {
     }
   }
 
-
   // Displayed letters will be updated every time a letter is guessed.
   useEffect(() => {
     createUpdatedMessage(messageToGuess);
@@ -112,16 +108,14 @@ function App() {
   // If 7 wrong letters are guessed, "game over" message will display.
   useEffect(() => {
     if (wrongLetters.length === 7) {
-      alert("Game over. Player 2 loses.");
-      setGameEnd(true);
+      setGameEnd("lose");
     }
   }, [wrongLetters]);
 
   // Game ends with p2 winning if lettersToDisplay isn't an empty string and if no underscores are left.
   useEffect(() => {
     if (lettersToDisplay.length > 0 && !lettersToDisplay.includes("_")) {
-      alert("Player 2 wins");
-      setGameEnd(true);
+      setGameEnd("win");
     }
   }, [lettersToDisplay]);
 
@@ -133,7 +127,7 @@ function App() {
     setGuessedLetters([]);
     setWrongLetters([]);
     setLettersToDisplay("");
-    setGameEnd(false);
+    setGameEnd("");
   }
 
   return (
@@ -157,6 +151,20 @@ function App() {
           establishMessage={establishMessage}
         />
       )}
+      <div className="error-area">
+        <p className="erorr-message">
+          {currentError === "too long"
+            ? `Message must be 140 characters or fewer.`
+            : currentError === "no hint"
+            ? `Please enter a hint.`
+            : null}
+        </p>
+      </div>
+      <div className="game-end-message">
+        <p className="game-end-message">
+          {hasGameEnded === "win" ? `Player 2 wins.` : hasGameEnded === "lose" ? "Player 2 loses" : ""}
+        </p>
+      </div>
     </div>
   );
 }
