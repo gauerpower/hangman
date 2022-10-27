@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 
 function KeyboardArea(props) {
   const keyboardLayout = [
@@ -6,6 +6,13 @@ function KeyboardArea(props) {
     ["A", "S", "D", "F", "G", "H", "J", "K", "L"],
     ["Z", "X", "C", "V", "B", "N", "M"],
   ];
+
+  useEffect(()=>{
+    document.addEventListener("keydown", props.guessKeyedLetter);
+    return (function(){
+      document.removeEventListener("keydown", props.guessKeyedLetter);
+    })
+  });
   return (
     <div className="keyboard-area">
       {keyboardLayout.map((arr, index) => {
@@ -15,7 +22,7 @@ function KeyboardArea(props) {
               return (
                 <button
                   className="letter-guesser"
-                  onClick={props.guessLetter}
+                  onClick={props.guessClickedLetter}
                   key={index}
                   id={letter}
                   value={letter}
