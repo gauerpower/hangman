@@ -5,7 +5,7 @@ function InputMessage(props) {
     <div className="message-input-container">
       <label htmlFor="message-text">
         Message Text:
-        <textarea
+        <textarea maxLength={140}
           name="message-text"
           id="message-text"
           placeholder="Message"

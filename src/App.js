@@ -4,7 +4,6 @@ import GuessingArea from "./components/GuessingArea";
 import InputArea from "./components/InputArea";
 
 // Need to make images of the hang'd man.
-// Need to make win & loss messages into HTML elements instead of just alerts.
 // Need to style.
 
 function App() {
@@ -16,32 +15,25 @@ function App() {
   const [wrongLetters, setWrongLetters] = useState([]);
   const [lettersToDisplay, setLettersToDisplay] = useState("");
   const [hasGameEnded, setGameEnd] = useState("");
-  const [currentError, setCurrentError] = useState("");
 
   // Setting up controlled components for the message and hint inputs.
   function changeTypedText(event) {
-    setTypedText(event.target.value);
+    const stripNonLetters = event.target.value.replace(/[^a-z \s]/gi, "");
+    setTypedText(stripNonLetters);
   }
   function changeTypedHint(event) {
-    setTypedHint(event.target.value);
+    const stripNonLetters = event.target.value.replace(/[^a-z \s]/gi, "");
+    setTypedHint(stripNonLetters);
   }
 
   // Function that will set the State values accordingly when player 1 enters a message and hint.
-  // Alerts will make sure message is reasonable length and hint exists.
+  // If-branches will check message length, presence of nonletters, and make sure message
+  // and hint actually exist.
   function establishMessage() {
-    if (typedText.length > 140) {
-      setCurrentError("too long");
-      return;
-    } else if (!typedHint) {
-      setCurrentError("no hint");
-      return;
-    } else {
-      setMessageToGuess(typedText.toUpperCase());
-      setHintToDisplay(typedHint.toUpperCase());
-      setTypedText("");
-      setTypedHint("");
-      setCurrentError("");
-    }
+    setMessageToGuess(typedText.toUpperCase());
+    setHintToDisplay(typedHint.toUpperCase());
+    setTypedText("");
+    setTypedHint("");
   }
 
   // Function that will create and display the message with underscores for unguessed letters.
@@ -53,7 +45,6 @@ function App() {
     for (let i = 0; i < message.length; i++) {
       if (message[i] === " ") {
         visibleLetters += " ";
-        console.log("Space added.");
       } else if (!guessedLetters.join("").includes(message[i])) {
         visibleLetters += "_";
       } else if (guessedLetters.join("").includes(message[i])) {
@@ -87,7 +78,6 @@ function App() {
 
   function guessKeyedLetter(event) {
     if (!/[a-z]/.test(event.key)) {
-      console.log("Non-alphanumeric key pressed.");
       return;
     }
     setGuessedLetters((prev) => [...prev, event.key.toUpperCase()]);
@@ -142,29 +132,17 @@ function App() {
           guessKeyedLetter={guessKeyedLetter}
           resetGame={resetGame}
           hasGameEnded={hasGameEnded}
+          messageToGuess={messageToGuess}
         />
       ) : (
         <InputArea
           changeTypedText={changeTypedText}
           typedText={typedText}
+          typedHint={typedHint}
           changeTypedHint={changeTypedHint}
           establishMessage={establishMessage}
         />
       )}
-      <div className="error-area">
-        <p className="erorr-message">
-          {currentError === "too long"
-            ? `Message must be 140 characters or fewer.`
-            : currentError === "no hint"
-            ? `Please enter a hint.`
-            : null}
-        </p>
-      </div>
-      <div className="game-end-message">
-        <p className="game-end-message">
-          {hasGameEnded === "win" ? `Player 2 wins.` : hasGameEnded === "lose" ? "Player 2 loses" : ""}
-        </p>
-      </div>
     </div>
   );
 }
