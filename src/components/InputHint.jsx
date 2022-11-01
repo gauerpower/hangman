@@ -3,9 +3,9 @@ import React from "react";
 function InputHint(props) {
   return (
     <div className="hint-input-container">
-      <label htmlFor="message-hint">
+      <label className="starting-input-label" htmlFor="message-hint">
         Topic/Hint:
-        <input
+        <input className="starting-input"
           maxLength={25}
           name="message-hint"
           id="message-hint"
@@ -13,6 +13,7 @@ function InputHint(props) {
           onChange={props.changeTypedHint}
           value={props.typedHint}
           placeholder="Topic/Hint"
+          size={25}
         ></input>
       </label>
     </div>

@@ -5,8 +5,11 @@ import InputHint from "./InputHint";
 function InputArea(props) {
   return (
     <div className="input-area">
-      <h2>Player 1, input a message:</h2>
-      <h3>(Player 2, please look away)</h3>
+      <div className="game-heading-container">
+        <h1 className="game-heading">Hangman</h1>
+      </div>
+      <h2 className="input-heading">Player 1, input a message</h2>
+      <h6 className="input-heading">(Player 2, please look away)</h6>
       <div className="text-area-and-button-container">
         <InputMessage
           changeTypedText={props.changeTypedText}
@@ -16,7 +19,7 @@ function InputArea(props) {
           changeTypedHint={props.changeTypedHint}
           typedHint={props.typedHint}
         />
-        <button
+        <button className="message-setter"
           onClick={props.establishMessage}
           disabled={!props.typedText || !props.typedHint}
         >

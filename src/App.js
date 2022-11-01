@@ -3,8 +3,6 @@ import "./App.css";
 import GuessingArea from "./components/GuessingArea";
 import InputArea from "./components/InputArea";
 
-// Need to make images of the hang'd man.
-// Need to style.
 
 function App() {
   const [typedText, setTypedText] = useState("");
@@ -77,7 +75,7 @@ function App() {
   // big document and use event.key instead of event.target.value)
 
   function guessKeyedLetter(event) {
-    if (!/[a-z]/.test(event.key)) {
+    if (!/[a-z]/.test(event.key) || event.key.length > 1) {
       return;
     }
     setGuessedLetters((prev) => [...prev, event.key.toUpperCase()]);
